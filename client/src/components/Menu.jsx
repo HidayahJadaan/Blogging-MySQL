@@ -1,7 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
-export default function Home() {
+export default function Menu() {
+
   const posts = [
     {
       id: 1,
@@ -28,27 +28,18 @@ export default function Home() {
       img: "https://images.pexels.com/photos/6157049/pexels-photo-6157049.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
     },
   ];
-
+  
   return (
-    <div className="home">
-      <div className="posts">
-        {posts.map((post) => (
-          <div className="post" key={post.id}>
-            <div className="img">
-              <img src={post.img} alt="" />
-            </div>
+    <div className="menu">
+      <h1>Other posts you may like</h1>
 
-            <div className="content">
-            <Link className="link" to={`/post/${post.id}`}>
-                <h1>{post.title}</h1>
-              </Link>
-              
-              <p>{post.desc}</p>
-              <button>Read More</button>
-            </div>
-          </div>
-        ))}
-      </div>
+      {posts.map((post) => (
+        <div className="post" key={post.id}>
+          <img src={post.img} alt="" />
+          <h2>{post.title}</h2>
+          <button>Read More</button>
+        </div>
+      ))}
     </div>
   );
 }
