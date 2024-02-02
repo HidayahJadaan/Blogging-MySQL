@@ -1,11 +1,15 @@
 import React from "react";
-import Logo from "../assets/img/logo.png";
+import Logo from "../img/logo.png";
 
-export default function Footer() {
+const Footer = () => {
   return (
-    <footer class="footer">
-      <img src={Logo} alt="LOGO" />
-      <span>Developed with ❤️, © 2024 Hidayah Jadaan</span>
+    <footer>
+      <img src={Logo} alt="" />
+      <span>
+        Made with ♥️ and <b>React.js</b>.
+      </span>
     </footer>
   );
-}
+};
+
+export default Footer;

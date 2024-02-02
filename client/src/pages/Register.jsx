@@ -17,15 +17,22 @@ const Register = () => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await axios.post("http://localhost:8800/api/auth/register", inputs);
       navigate("/login");
     } catch (err) {
-      setError(err.response.data);
+      console.error("Registration error:", err);
+      // Extract a more specific message if possible
+      const errorMessage = err.response && err.response.data && err.response.data.message
+        ? err.response.data.message
+        : "An error occurred during registration.";
+      setError(errorMessage);
     }
   };
+  
 
   return (
     <div className="auth">

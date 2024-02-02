@@ -31,9 +31,9 @@ export const register = (req, res) => {
 export const login = (req, res) => {
   //CHECK USER
 
-  const q = "SELECT * FROM users WHERE username = ?";
+  const q = "SELECT * FROM users WHERE email = ?";
 
-  db.query(q, [req.body.username], (err, data) => {
+  db.query(q, [req.body.email], (err, data) => {
     if (err) return res.status(500).json(err);
     if (data.length === 0) return res.status(404).json("User not found!");
 
@@ -44,14 +44,14 @@ export const login = (req, res) => {
     );
 
     if (!isPasswordCorrect)
-      return res.status(400).json("Wrong username or password!");
+      return res.status(400).json("Wrong email or password!");
 
     const token = jwt.sign({ id: data[0].id }, "jwtkey");
     const { password, ...other } = data[0];
 
     res
       .cookie("access_token", token, {
-        httpOnly: true,
+        httpOnly: true, // extra secuirty
       })
       .status(200)
       .json(other);
