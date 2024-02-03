@@ -7,48 +7,59 @@ import moment from "moment";
 
 const Write = () => {
   const state = useLocation().state;
-  const [value, setValue] = useState(state?.title || "");
-  const [title, setTitle] = useState(state?.desc || "");
+  const [value, setValue] = useState(state?.desc || ""); // Fixed the state initialization
+  const [title, setTitle] = useState(state?.title || ""); // Fixed the state initialization
   const [file, setFile] = useState(null);
   const [cat, setCat] = useState(state?.cat || "");
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
+  const backendBaseUrl =  "http://localhost:8800";
 
   const upload = async () => {
+    if (!file) return null; // Ensure there's a file to upload and return null if not
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await axios.post("/upload", formData);
-      return res.data;
+      const res = await axios.post("http://localhost:8800/api/upload", formData);
+      // Assuming the response contains the filename, construct the full URL here
+      return `${backendBaseUrl}/upload/${res.data}`;
     } catch (err) {
       console.log(err);
+      return null;
     }
+  };
+  
+
+  const goToHomeAndRefresh = () => {
+    navigate('/', { state: { refresh: true } });
   };
 
   const handleClick = async (e) => {
     e.preventDefault();
     const imgUrl = await upload();
-
+    console.log("Uploaded Image URL:", imgUrl);
+  
     try {
-      state
-        ? await axios.put(`/posts/${state.id}`, {
-            title,
-            desc: value,
-            cat,
-            img: file ? imgUrl : "",
-          })
-        : await axios.post(`/posts/`, {
-            title,
-            desc: value,
-            cat,
-            img: file ? imgUrl : "",
-            date: moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
-          });
-          navigate("/")
+      const postData = {
+        title,
+        desc: value,
+        cat,
+        img: imgUrl || "", // Use the full URL or an empty string if upload failed
+        date: state ? undefined : moment(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+      };
+  
+      if (state?.id) {
+        await axios.put(`/posts/${state.id}`, postData);
+      } else {
+        await axios.post(`/posts/`, postData);
+      }
+  
+      goToHomeAndRefresh(); // Navigate back to home with refresh indication
     } catch (err) {
       console.log(err);
     }
   };
+  
 
   return (
     <div className="add">

@@ -3,11 +3,11 @@ import { useEffect } from "react";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
-
 const Home = () => {
   const [posts, setPosts] = useState([]);
 
   const cat = useLocation().search
+  const location = useLocation(); // Use location to access the navigation state
 
   useEffect(() => {
     const fetchData = async () => {
@@ -18,8 +18,18 @@ const Home = () => {
         console.log(err);
       }
     };
+
     fetchData();
-  }, [cat]);
+
+    // Optional: Reset navigation state to avoid unintended refreshes
+    // if the page is navigated to with a state indicating a refresh
+    if (location.state?.refresh) {
+      // Resetting state logic here depends on your routing setup
+      // You might navigate with a replacement state, or use another method to clear it
+    }
+  }, [cat, location.state?.refresh]); // Depend on both 'cat' and 'refresh' state
+
+
   // const posts = [
   //   {
   //     id: 1,
@@ -59,7 +69,7 @@ const Home = () => {
         {posts.map((post) => (
           <div className="post" key={post.id}>
             <div className="img">
-              <img src={`../upload/${post.img}`} alt="" />
+              <img src={post?.img} alt="" />
             </div>
             <div className="content">
               <Link className="link" to={`/post/${post.id}`}>
